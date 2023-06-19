@@ -15,6 +15,10 @@ public class RomanNumeralsTests
     [InlineData(8, "VIII")]
     [InlineData(9, "IX")]
     [InlineData(10, "X")]
+    [InlineData(17, "XVII")]
+    [InlineData(38, "XXXVIII")]
+    [InlineData(479, "CDLXXIX")]
+    [InlineData(3999, "MMMCMXCIX")]
     public void MapCorrectly(int arabic, string expectedRoman)
     {
         string result = new RomanNumerals().Map(arabic);
