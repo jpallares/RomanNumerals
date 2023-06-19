@@ -4,12 +4,14 @@ public class RomanNumerals
 {
     public static string Map(int arabic)
     {
-        if (arabic == 3)
-            return "III";
+        string roman = "";
+
+        while (arabic > 0)
+        {
+            roman += "I";
+            arabic--;
+        }
         
-        if (arabic == 2)
-            return "II";
-        
-        return "I";
+        return roman;
     }
 }

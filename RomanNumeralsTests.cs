@@ -8,10 +8,10 @@ public class RomanNumeralsTests
     [InlineData(1, "I")]
     [InlineData(2, "II")]
     [InlineData(3, "III")]
-    public void MapCorrectly(int arabic, string roman)
+    public void MapCorrectly(int arabic, string expectedRoman)
     {
         string result = RomanNumerals.Map(arabic);
 
-        Assert.Equal(result, roman);
+        Assert.Equal(expectedRoman, result);
     }
 }
