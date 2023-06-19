@@ -2,18 +2,24 @@
 
 public class RomanNumerals
 {
-    public static string Map(int arabic)
+    private readonly Dictionary<int, string> _equivalencies = new()
     {
-        if (arabic == 5)
-            return "V";
-        if (arabic == 4)
-            return "IV";
-        
+        { 5, "V" },
+        { 4, "IV" },
+        { 1, "I" }
+    };
+
+    public string Map(int arabic)
+    {
         string roman = "";
-        while (arabic > 0)
+        
+        foreach (var (keyArabic, valueRoman) in _equivalencies)
         {
-            roman += "I";
-            arabic--;
+            while (arabic >= keyArabic)
+            {
+                roman += valueRoman;
+                arabic -= keyArabic;
+            }
         }
         
         return roman;
