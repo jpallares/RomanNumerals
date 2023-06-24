@@ -1,4 +1,6 @@
-﻿namespace RomanNumerals;
+﻿using System.Runtime.InteropServices;
+
+namespace RomanNumerals;
 
 public class RomanNumerals
 {
@@ -31,16 +33,9 @@ public class RomanNumerals
         if (!found)
         {
             result = "";
-            for (int i = 0; i < _romanDictionary.Count; i++)
-            {
-                if (arabic > _romanDictionary.Keys.ElementAt(i) && arabic < _romanDictionary.Keys.ElementAt(i + 1))
-                {
-                    result = _romanDictionary.Values.ElementAt(i);
-                    arabic -= _romanDictionary.Keys.ElementAt(i);
-                    break;
-                }
-                
-            }
+            var matchingEntry = _romanDictionary.Last(x => x.Key < arabic);
+            result = matchingEntry.Value;
+            arabic -= matchingEntry.Key;
 
             for (int i = 0; i < arabic; i++)
             {
