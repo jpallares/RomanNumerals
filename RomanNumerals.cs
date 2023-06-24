@@ -18,8 +18,6 @@ public class RomanNumerals
         };
         _concreteNumbersDictionary = new Dictionary<int, string>()
         {
-            { 4, "IV" },
-            { 9, "IX" },
             { 14, "XIV" }
         };
     }
@@ -33,16 +31,27 @@ public class RomanNumerals
         if (!found)
         {
             result = "";
-            var matchingEntry = _romanDictionary.Last(x => x.Key < arabic);
-            result = matchingEntry.Value;
-            arabic -= matchingEntry.Key;
-
-            for (int i = 0; i < arabic; i++)
+            var previousEntry = _romanDictionary.Last(x => x.Key < arabic);
+            var nextEntry = _romanDictionary.First(x => x.Key > arabic);
+            if (arabic + 1 == nextEntry.Key)
             {
-                result += "I";
+                result = String.Concat("I" + nextEntry.Value);
             }
+
+
+            else
+            {
+                result = previousEntry.Value;
+                arabic -= previousEntry.Key;
+                for (int i = 0; i < arabic; i++)
+                {
+                    result += "I";
+                }
+            }
+
         }
 
         return result;
     }
+
 }
