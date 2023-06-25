@@ -18,7 +18,7 @@ public class RomanNumerals
         };
         _concreteNumbersDictionary = new Dictionary<int, string>()
         {
-            { 14, "XIV" }
+            //{ 16, "XVI" }
         };
     }
     public string Map(int arabic)
@@ -26,32 +26,56 @@ public class RomanNumerals
         //return new string(Enumerable.Repeat('I',arabic).ToArray());
         var mergedDictionaries = _romanDictionary.Concat(_concreteNumbersDictionary)
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
         var found = mergedDictionaries.TryGetValue(arabic, out var result);
 
         if (!found)
         {
             result = "";
             var previousEntry = _romanDictionary.Last(x => x.Key < arabic);
-            var nextEntry = _romanDictionary.First(x => x.Key > arabic);
-            if (arabic + 1 == nextEntry.Key)
-            {
-                result = String.Concat("I" + nextEntry.Value);
-            }
+            (arabic,result) = GetResultIfIsOneLessThanRomanNumber(arabic, result);
 
 
-            else
+            if (arabic > 0)
             {
-                result = previousEntry.Value;
+                result += previousEntry.Value;
                 arabic -= previousEntry.Key;
-                for (int i = 0; i < arabic; i++)
+
+                if (_romanDictionary.ContainsKey(arabic))
                 {
-                    result += "I";
+                    result += _romanDictionary[arabic];
                 }
+
+                else
+                {
+                    (arabic,result) = GetResultIfIsOneLessThanRomanNumber(arabic, result);
+                    if (arabic > 0)
+                    {
+                        for (int i = 0; i < arabic; i++)
+                        {
+                            result += "I";
+                        }
+                    }
+
+                }
+
             }
 
         }
 
         return result;
+    }
+
+    private Tuple<int,string> GetResultIfIsOneLessThanRomanNumber(int arabic, string result)
+    {
+        var entryWhereIsOneMoreThanArabic = _romanDictionary.SingleOrDefault(x => x.Key == arabic + 1);
+        if (entryWhereIsOneMoreThanArabic.Key != default)
+        {
+            result += string.Concat("I" + entryWhereIsOneMoreThanArabic.Value);
+        }
+
+        arabic -= entryWhereIsOneMoreThanArabic.Key;
+        return new Tuple<int, string>(arabic,result);
     }
 
 }
