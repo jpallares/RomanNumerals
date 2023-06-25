@@ -26,36 +26,29 @@ public class RomanNumerals
         while (arabic > 0)
         {
             var found = _romanDictionary.TryGetValue(arabic, out var foundResult);
+
             if (found)
             {
                 arabic  = 0;
-                result = foundResult;
+                result += foundResult;
             }
-            if (!found)
+
+            else
             {
                 var previousEntry = _romanDictionary.Last(x => x.Key < arabic);
-                (arabic, result) = GetResultIfIsOneLessThanRomanNumber(arabic, result!);
+                (arabic, result) = GetResultIfIsOneLessThanRomanNumber(arabic, result);
 
+                if (arabic <= 0)
+                    continue;
 
-                if (arabic > 0)
+                result += previousEntry.Value;
+                arabic -= previousEntry.Key;
+
+                if (arabic <= 3)
                 {
-                    result += previousEntry.Value;
-                    arabic -= previousEntry.Key;
-
-                    if (_romanDictionary.ContainsKey(arabic))
-                    {
-                        result += _romanDictionary[arabic];
-                        arabic = 0;
-                        continue;
-                    }
-
-                    if (arabic <= 3)
-                    {
-                        result += string.Concat(Enumerable.Repeat('I', arabic));
-                        arabic = 0;
-                    }
+                    result += string.Concat(Enumerable.Repeat('I', arabic));
+                    arabic = 0;
                 }
-
             }
         }
 
@@ -66,6 +59,7 @@ public class RomanNumerals
     {
         if (arabic == 9)
             return new Tuple<int, string>(0, result+="IX");
+
         var previousEntry = _romanDictionary.Last(x => x.Key < arabic);
         var entryWhereIsOneMoreThanArabic = _romanDictionary.SingleOrDefault(x => x.Key == arabic + previousEntry.Key);
         if (entryWhereIsOneMoreThanArabic.Key != default)
