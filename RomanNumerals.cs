@@ -14,53 +14,49 @@ public class RomanNumerals
             {1, "I"},
             {5, "V"},
             {10, "X"},
-            {50, "L"}
-        };
-        _concreteNumbersDictionary = new Dictionary<int, string>()
-        {
-            //{ 16, "XVI" }
+            {50, "L"},
+            {100, "C"},
+            {500, "D"},
+            {1000, "M"}
         };
     }
     public string Map(int arabic)
     {
-        //return new string(Enumerable.Repeat('I',arabic).ToArray());
-        var mergedDictionaries = _romanDictionary.Concat(_concreteNumbersDictionary)
-            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-        var found = mergedDictionaries.TryGetValue(arabic, out var result);
-
-        if (!found)
+        var result = "";
+        while (arabic > 0)
         {
-            result = "";
-            var previousEntry = _romanDictionary.Last(x => x.Key < arabic);
-            (arabic,result) = GetResultIfIsOneLessThanRomanNumber(arabic, result);
-
-
-            if (arabic > 0)
+            var found = _romanDictionary.TryGetValue(arabic, out var foundResult);
+            if (found)
             {
-                result += previousEntry.Value;
-                arabic -= previousEntry.Key;
+                arabic  = 0;
+                result = foundResult;
+            }
+            if (!found)
+            {
+                var previousEntry = _romanDictionary.Last(x => x.Key < arabic);
+                (arabic, result) = GetResultIfIsOneLessThanRomanNumber(arabic, result!);
 
-                if (_romanDictionary.ContainsKey(arabic))
-                {
-                    result += _romanDictionary[arabic];
-                }
 
-                else
+                if (arabic > 0)
                 {
-                    (arabic,result) = GetResultIfIsOneLessThanRomanNumber(arabic, result);
-                    if (arabic > 0)
+                    result += previousEntry.Value;
+                    arabic -= previousEntry.Key;
+
+                    if (_romanDictionary.ContainsKey(arabic))
                     {
-                        for (int i = 0; i < arabic; i++)
-                        {
-                            result += "I";
-                        }
+                        result += _romanDictionary[arabic];
+                        arabic = 0;
+                        continue;
                     }
 
+                    if (arabic <= 3)
+                    {
+                        result += string.Concat(Enumerable.Repeat('I', arabic));
+                        arabic = 0;
+                    }
                 }
 
             }
-
         }
 
         return result;
@@ -68,10 +64,13 @@ public class RomanNumerals
 
     private Tuple<int,string> GetResultIfIsOneLessThanRomanNumber(int arabic, string result)
     {
-        var entryWhereIsOneMoreThanArabic = _romanDictionary.SingleOrDefault(x => x.Key == arabic + 1);
+        if (arabic == 9)
+            return new Tuple<int, string>(0, result+="IX");
+        var previousEntry = _romanDictionary.Last(x => x.Key < arabic);
+        var entryWhereIsOneMoreThanArabic = _romanDictionary.SingleOrDefault(x => x.Key == arabic + previousEntry.Key);
         if (entryWhereIsOneMoreThanArabic.Key != default)
         {
-            result += string.Concat("I" + entryWhereIsOneMoreThanArabic.Value);
+            result += string.Concat(previousEntry.Value + entryWhereIsOneMoreThanArabic.Value);
         }
 
         arabic -= entryWhereIsOneMoreThanArabic.Key;
