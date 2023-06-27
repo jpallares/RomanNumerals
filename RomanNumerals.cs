@@ -19,21 +19,18 @@ public class RomanNumerals
         while (arabic > 0)
         {
             var found = dictionary.TryGetValue(arabic, out var foundResult);
+            var arabicFound = arabic;
+            var newResult = foundResult;
 
-            if (found)
-            {
-                arabic  = 0;
-                result += foundResult;
-            }
-
-            else
+            if (!found)
             {
                 var previousEntry = dictionary.Last(x => x.Key < arabic);
-
-                result += previousEntry.Value;
-                arabic -= previousEntry.Key;
-
+                arabicFound = previousEntry.Key;
+                newResult = previousEntry.Value;
             }
+
+            result += newResult;
+            arabic -= arabicFound;
         }
 
         return result;
