@@ -23,6 +23,7 @@ public class RomanNumeralsTests
     [InlineData(16, "XVI")]
     [InlineData(300, "CCC")]
     [InlineData(400, "CD")]
+    [InlineData(95, "XCV")]
     public void MapCorrectly(int arabic, string roman)
     {
         string result = new RomanNumerals().Map(arabic);
