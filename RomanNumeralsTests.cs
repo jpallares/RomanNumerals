@@ -1,9 +1,17 @@
+using Moq;
 using Xunit;
 
 namespace RomanNumerals;
 
 public class RomanNumeralsTests
 {
+    private readonly RomanDictionaryProvider dictionaryProvider;
+
+    public RomanNumeralsTests()
+    {
+        dictionaryProvider = new RomanDictionaryProvider();
+    }
+
     [Theory]
     [InlineData(1, "I")]
     [InlineData(2, "II")]
@@ -28,7 +36,7 @@ public class RomanNumeralsTests
     [InlineData(1652, "MDCLII")]
     public void MapCorrectly(int arabic, string roman)
     {
-        string result = new RomanNumerals().Map(arabic);
+        string result = new RomanNumerals(dictionaryProvider).Map(arabic);
 
         Assert.Equal(result, roman);
     }
