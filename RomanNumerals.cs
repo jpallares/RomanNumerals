@@ -1,41 +1,16 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace RomanNumerals;
 
 public class RomanNumerals
 {
     private readonly Dictionary<int, string> _romanDictionary;
-    private readonly Dictionary<int, string> _calculatedDictionary;
-    private readonly Dictionary<int, string> _fullDictionary;
 
 
     public RomanNumerals()
     {
-        _romanDictionary = new Dictionary<int, string>()
-        {
-            {1, "I"},
-            {5, "V"},
-            {10, "X"},
-            {50, "L"},
-            {100, "C"},
-            {500, "D"},
-            {1000, "M"}
-        };
-        _calculatedDictionary = new Dictionary<int, string>();
-        for (int i = 0; i < _romanDictionary.Count - 2; i++)
-        {
-            var newKey = _romanDictionary.ElementAt(i + 2).Key - _romanDictionary.ElementAt(i).Key;
-            var newValue = _romanDictionary.ElementAt(i).Value + _romanDictionary.ElementAt(i + 2).Value;
-            _calculatedDictionary.Add(newKey, newValue);
-        }
-        for (int i = 0; i < _romanDictionary.Count - 1; i++)
-        {
-            var newKey = _romanDictionary.ElementAt(i + 1).Key - _romanDictionary.ElementAt(i).Key;
-            var newValue = _romanDictionary.ElementAt(i).Value + _romanDictionary.ElementAt(i + 1).Value;
-            _calculatedDictionary.Add(newKey, newValue);
-        }
-
-        _fullDictionary = _romanDictionary.Concat(_calculatedDictionary).DistinctBy(x => x.Key).OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+        _romanDictionary = GetGeneralDictionary();
     }
 
     public string Map(int arabic)
@@ -43,7 +18,7 @@ public class RomanNumerals
         var result = "";
         while (arabic > 0)
         {
-            var found = _fullDictionary.TryGetValue(arabic, out var foundResult);
+            var found = _romanDictionary.TryGetValue(arabic, out var foundResult);
 
             if (found)
             {
@@ -53,7 +28,7 @@ public class RomanNumerals
 
             else
             {
-                var previousEntry = _fullDictionary.Last(x => x.Key < arabic);
+                var previousEntry = _romanDictionary.Last(x => x.Key < arabic);
 
                 result += previousEntry.Value;
                 arabic -= previousEntry.Key;
@@ -69,4 +44,41 @@ public class RomanNumerals
         return result;
     }
 
+
+    private Dictionary<int, string> GetGeneralDictionary()
+    {
+        var singleLetterDictionary = GetSingleLetterDictionary();
+        return singleLetterDictionary.Concat(GetCalculatedValuesDictionary(singleLetterDictionary)).DistinctBy(x => x.Key)
+            .OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    private Dictionary<int, string> GetSingleLetterDictionary()
+    {
+        return new Dictionary<int, string>()
+        {
+            { 1, "I" },
+            { 5, "V" },
+            { 10, "X" },
+            { 50, "L" },
+            { 100, "C" },
+            { 500, "D" },
+            { 1000, "M" }
+        };
+    }
+
+    private Dictionary<int,string> GetCalculatedValuesDictionary(Dictionary<int, string> singleLetterDictionary)
+    {
+        var calculatedDictionary = new Dictionary<int, string>();
+        for (int j = 1; j < 2; j++)
+        {
+            for (int i = 0; i < singleLetterDictionary.Count - j; i++)
+            {
+                var newKey = singleLetterDictionary.ElementAt(i + j).Key - singleLetterDictionary.ElementAt(i).Key;
+                var newValue = singleLetterDictionary.ElementAt(i).Value + singleLetterDictionary.ElementAt(i + j).Value;
+                calculatedDictionary.Add(newKey, newValue);
+            }
+        }
+
+        return calculatedDictionary;
+    }
 }
