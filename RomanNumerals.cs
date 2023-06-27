@@ -33,11 +33,6 @@ public class RomanNumerals
                 result += previousEntry.Value;
                 arabic -= previousEntry.Key;
 
-                if (arabic <= 3)
-                {
-                    result += string.Concat(Enumerable.Repeat('I', arabic));
-                    arabic = 0;
-                }
             }
         }
 

@@ -47,6 +47,24 @@ public class RomanDictionaryProvider : IRomanDictionaryProvider
     private Dictionary<int,string> GetCalculatedValuesDictionary()
     {
         var calculatedDictionary = new Dictionary<int, string>();
+
+        AddFirstThreeNumbers(calculatedDictionary);
+
+        AddMissingCombinations(calculatedDictionary);
+
+        return calculatedDictionary;
+    }
+
+    private void AddFirstThreeNumbers(Dictionary<int, string> calculatedDictionary)
+    {
+        for (int i = 1; i <= 3; i++)
+        {
+            calculatedDictionary.Add(i, string.Concat(Enumerable.Repeat('I', i)));
+        }
+    }
+
+    private void AddMissingCombinations(Dictionary<int, string> calculatedDictionary)
+    {
         for (int j = 1; j <= 2; j++)
         {
             for (int i = 0; i < _singleLetterDictionary.Count - j; i++)
@@ -56,7 +74,5 @@ public class RomanDictionaryProvider : IRomanDictionaryProvider
                 calculatedDictionary.Add(newKey, newValue);
             }
         }
-
-        return calculatedDictionary;
     }
 }
